@@ -2,6 +2,7 @@ import streamlit as st
 from langchain_openai import OpenAI
 from langchain.docstore.document import Document
 from langchain.text_splitter import CharacterTextSplitter
+from langchain.prompts import PromptTemplate
 from langchain.chains.summarize import load_summarize_chain
 
 def generar_respuesta(txt):
@@ -12,9 +13,17 @@ def generar_respuesta(txt):
     divisor_texto = CharacterTextSplitter()
     textos = divisor_texto.split_text(txt)
     documentos = [Document(page_content=t) for t in textos]
+    
+    # Prompt en español
+    prompt_espanol = PromptTemplate(
+        input_variables=["texto"],
+        template="Resume el siguiente texto en español de manera clara y concisa:\n\n{texto}"
+    )
+
     cadena = load_summarize_chain(
         llm,
-        chain_type="map_reduce"
+        chain_type="map_reduce",
+        prompt=prompt_espanol
     )
     return cadena.run(documentos)
 
