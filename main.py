@@ -3,7 +3,7 @@ from langchain_openai import OpenAI
 from langchain.docstore.document import Document
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.prompts import PromptTemplate
-from langchain.chains.summarize import load_summarize_chain
+from langchain.chains.llm import LLMChain
 
 def generar_respuesta(txt):
     llm = OpenAI(
@@ -20,11 +20,8 @@ def generar_respuesta(txt):
         template="Resume el siguiente texto en español de manera clara y concisa:\n\n{texto}"
     )
 
-    cadena = load_summarize_chain(
-        llm,
-        chain_type="map_reduce",
-        prompt=prompt_espanol
-    )
+    cadena = LLMChain(llm=llm, prompt=prompt_espanol)
+    
     return cadena.run(documentos)
 
 st.set_page_config(
